@@ -3,538 +3,560 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aniversariantes da Educação</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aniversários">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-  /* --- CORES E VARIÁVEIS --- */
+  /* --- CONFIGURAÇÕES GERAIS --- */
   :root {
-    --primary: #27ae60; --primary-dark: #1e8449; --accent: #eafff2;
-    --highlight-today: #dcfce7; --white: #ffffff;
-    --text-main: #2c3e50; --text-light: #95a5a6;
-    --whatsapp-color: #25D366; --whatsapp-dark: #128C7E;
-    --shadow: 0 10px 30px rgba(39, 174, 96, 0.15); --radius: 16px;
+    --primary: #27ae60; 
+    --primary-dark: #1e8449; 
+    --bg-screen: #ffffff;
+    --text-color: #2c3e50;
+    --border-color: #e0e0e0;
+    --emoji-font: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
   }
 
-  html, body { height: auto; min-height: 100%; }
+  * { box-sizing: border-box; }
 
-  body {
-    font-family: 'Poppins', sans-serif; margin: 0; padding: 10px;
-    background: transparent; color: var(--text-main);
-    box-sizing: border-box;
+  html, body { 
+      margin: 0; padding: 0; 
+      font-family: 'Poppins', sans-serif; 
+      background: var(--bg-screen);
+      height: 100%;
+      -webkit-tap-highlight-color: transparent;
   }
 
-  .widget-container {
-    background: var(--white); border-radius: var(--radius);
-    box-shadow: var(--shadow); padding: 25px; 
-    width: 100%; max-width: 100%;
-    margin: 0 auto; overflow: hidden; position: relative;
-    display: flex; flex-direction: column;
-    box-sizing: border-box;
-  }
-
-  /* --- CABEÇALHOS --- */
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #f5f5f5; }
-  .header-content { text-align: center; flex-grow: 1; padding: 0 10px; }
-  .date-display { font-size: 1.4rem; font-weight: 700; color: var(--primary); text-transform: capitalize; line-height: 1.2; margin: 0; }
-  .subtitle { font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; font-weight: 500; }
-  .nav-btn { background: var(--accent); color: var(--primary); border: none; width: 35px; height: 35px; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .nav-btn:hover { background: var(--primary); color: var(--white); transform: scale(1.05); }
-
-  /* --- BUSCA --- */
-  .search-container { margin-bottom: 20px; position: relative; width: 100%; box-sizing: border-box;}
-  .search-input { width: 100%; padding: 10px 15px 10px 35px; border: 1px solid #e0e0e0; background: transparent; border-radius: 30px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: var(--text-main); outline: none; box-sizing: border-box; transition: all 0.3s; }
-  .search-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 2px var(--accent); }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none; font-size: 0.9rem; }
-
-  /* --- IMPRESSÃO --- */
-  .print-header { display: none; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-  .print-title { font-size: 20pt; font-weight: 800; color: #000; margin: 0; text-transform: uppercase;}
-  .print-subtitle { font-size: 12pt; font-weight: 500; color: #333; margin: 5px 0 0 0; }
-
-  /* --- HERO SECTION --- */
-  #hero-section {
-    display: none;
-    /* Gradiente Fundo */
-    background: radial-gradient(circle at top left, #27ae60, #1e8449);
-    padding: 35px 20px; border-radius: var(--radius);
-    margin-bottom: 30px; text-align: center;
-    box-shadow: 0 10px 30px rgba(39, 174, 96, 0.25);
-    animation: slideDown 0.5s ease-out; position: relative; overflow: hidden; 
-    cursor: default; width: 100%; box-sizing: border-box;
-  }
-  .hero-content-wrapper { position: relative; z-index: 5; pointer-events: none; }
-  .hero-content-wrapper * { pointer-events: auto; } 
-
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  /* ========================================= */
+  /* ESTILOS DE TELA (INTERATIVO)             */
+  /* ========================================= */
   
-  .hero-title { 
-      font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; 
-      color: rgba(255,255,255,0.9); margin-bottom: 10px; font-weight: 600;
-  }
-  
-  /* NOMES */
-  .hero-names-container { display: flex; flex-direction: column; gap: 5px; margin: 10px 0 20px 0; }
-  .hero-name-item { 
-      font-size: 1.8rem; font-weight: 800; color: #fff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.15); line-height: 1.2;
-  }
-  
-  /* CAIXA DE MENSAGEM (EFEITO VIDRO AQUI) */
-  .hero-message-box { 
-      background: rgba(255, 255, 255, 0.08); /* Super transparente */
-      backdrop-filter: blur(8px); /* Desfoque do vidro */
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px; 
-      padding: 20px; 
-      margin-top: 15px; 
+  .screen-widget {
+      background: var(--bg-screen);
+      width: 100%;
+      max-width: 1000px; 
+      height: 100vh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       position: relative;
-      z-index: 10; /* Fica acima dos emojis */
-  }
-  
-  .hero-message-text { font-size: 0.95rem; font-weight: 400; line-height: 1.5; font-style: italic; margin-bottom: 10px; color: #fff; }
-  
-  .hero-signature { 
-      font-size: 0.85rem; font-weight: 600; opacity: 0.9; margin-top: 5px; 
-      border-top: 1px solid rgba(255,255,255,0.2); 
-      padding-top: 8px; display: inline-block; color: #fff;
-  }
-  
-  .hero-icon { font-size: 4rem; display: inline-block; margin-bottom: 5px; transition: transform 0.3s; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
-  #hero-section.active-party .hero-icon { animation: partyShake 0.8s infinite, intenseGlow 2s infinite alternate; }
-  @keyframes partyShake { 0%, 100% { transform: rotate(0deg) scale(1.1); } 25% { transform: rotate(-10deg) scale(1.2); } 75% { transform: rotate(10deg) scale(1.2); } }
-  @keyframes intenseGlow { from { filter: drop-shadow(0 0 5px gold); } to { filter: drop-shadow(0 0 25px gold); } }
-
-  /* --- EFEITOS (Ativados por 3s) --- */
-  .effects-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
-  
-  /* Emojis ficam atrás do vidro (z-index 1) */
-  .floating-emoji { position: absolute; bottom: -60px; opacity: 0; user-select: none; z-index: 1; }
-  
-  #hero-section.active-party .floating-emoji { 
-      animation-name: floatUpBurstNatural; 
-      animation-duration: 3s; 
-      animation-timing-function: ease-out; 
-      animation-fill-mode: forwards; 
-  }
-  @keyframes floatUpBurstNatural {
-      0% { transform: translate(0, 0) rotate(0deg) scale(0.5); opacity: 0; }
-      10% { opacity: 0.8; transform: translate(calc(var(--drift) * 0.1), -50px) scale(1); }
-      100% { transform: translate(var(--drift), -450px) rotate(var(--rot-end)) scale(1.3); opacity: 0; }
   }
 
-  .confetti { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 3px; opacity: 0; background: gold; z-index: 20; }
-  #hero-section.active-party .confetti { animation: fireworkRandom 3s ease-out forwards; }
-  @keyframes fireworkRandom { 0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; } 30% { transform: translate(var(--rand-x), var(--rand-y)) scale(1.5) rotate(var(--rand-rot)); opacity: 1; } 100% { transform: translate(var(--rand-x), calc(var(--rand-y) + 100px)) scale(0) rotate(calc(var(--rand-rot) + 180deg)); opacity: 0; } }
+  /* Cabeçalho */
+  .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+  .month-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); text-transform: capitalize; margin: 0; text-align: center; }
+  .nav-btn { background: #eafff2; color: var(--primary); border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+  .nav-btn:hover { background: var(--primary); color: #fff; }
 
-  /* --- LISTA --- */
-  .birthday-list { list-style: none; padding: 0; margin: 0; max-height: none; overflow: visible; width: 100%; }
-  .birthday-item { display: flex; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid transparent; transition: all 0.2s; position: relative; background-color: #fff; }
-  .birthday-item:hover { background-color: #f9f9f9; border-color: #eee; }
-  .is-today-item { background-color: var(--highlight-today) !important; border: 1px solid var(--primary) !important; }
-  .is-today-item .person-name { color: var(--primary-dark) !important; font-weight: 800 !important; }
-  .is-today-item .date-box { background-color: var(--primary) !important; color: var(--white) !important; }
-
-  .date-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f3f4f6; color: var(--text-light); width: 55px; height: 55px; border-radius: 10px; margin-right: 15px; flex-shrink: 0; text-align: center; }
-  .date-day { font-size: 1.2rem; font-weight: 700; line-height: 1; }
-  .date-week { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
-  .date-month { font-size: 0.6rem; text-transform: uppercase; font-weight: 600; margin-top: 1px; color: var(--white); opacity: 0.9;}
-  .date-box:not(.is-today-item .date-box) .date-month { color: #888; }
+  /* Ferramentas */
+  .tools-row { display: flex; gap: 15px; margin-bottom: 15px; flex-shrink: 0; height: 45px; align-items: center; }
   
-  .person-info { flex-grow: 1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 5px; }
-  .person-name { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-right: 5px; }
-
-  /* --- BOTÃO WHATSAPP --- */
-  .whatsapp-btn {
-      background-color: var(--whatsapp-color); color: white; border: none; border-radius: 50px;
-      padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 5px; transition: all 0.3s ease;
-      text-decoration: none; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); white-space: nowrap;
+  .search-bar { 
+      flex-grow: 1; 
+      display: flex; align-items: center; 
+      background: #f9f9f9; 
+      padding: 0 15px; 
+      border-radius: 8px; 
+      border: 1px solid #eee; 
+      transition: 0.3s; 
   }
-  .whatsapp-btn:hover { background-color: var(--whatsapp-dark); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(37, 211, 102, 0.5); }
-  .wa-icon { font-size: 1.1rem; }
-
-  /* --- RODAPÉ --- */
-  .footer-actions { margin-top: 20px; padding-top: 15px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-start; }
-  .print-btn { background: transparent; color: #95a5a6; border: 1px solid #e0e0e0; padding: 6px 12px; border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
-  .print-btn:hover { background: #f5f5f5; color: #333; border-color: #ccc; }
-  .status-msg { text-align: center; color: var(--text-light); margin: 30px 0; }
-  .reset-btn { display: block; margin: 5px auto 0; background: none; border: 1px solid #ddd; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; color: #888; cursor: pointer; }
-
-  /* --- RESPONSIVIDADE MOBILE --- */
-  @media (max-width: 480px) {
-      body { padding: 5px; }
-      .widget-container { padding: 15px; }
-      .hero-name-item { font-size: 1.5rem; }
-      .hero-icon { font-size: 3rem; }
-      .date-box { width: 45px; height: 45px; margin-right: 10px; }
-      .date-day { font-size: 1rem; }
-      .person-name { font-size: 0.9rem; }
-      .whatsapp-btn { padding: 4px 8px; font-size: 0.65rem; gap: 3px; }
-      .wa-icon { font-size: 0.9rem; }
+  .search-bar:focus-within { border-color: var(--primary); background: #fff; }
+  .search-input { 
+      border: none; background: transparent; 
+      flex-grow: 1; outline: none; margin-left: 10px; 
+      font-family: inherit; color: var(--text-color); font-size: 1rem; 
+      font-size: 16px; 
   }
+
+  /* BOTÃO NOTIFICAÇÃO (SININHO) */
+  .notify-btn {
+      background: #fff; border: 1px solid #eee; color: #f39c12;
+      border-radius: 8px; width: 45px; height: 100%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; transition: 0.2s;
+  }
+  .notify-btn.active { background: #fff8e1; border-color: #f39c12; }
+
+  .print-btn-top { 
+      background: var(--primary); 
+      color: white; border: none; 
+      border-radius: 8px; 
+      padding: 0 20px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 0.95rem; 
+      display: flex; align-items: center; gap: 8px; 
+      transition: 0.2s; white-space: nowrap; 
+      height: 100%;
+  }
+  .print-btn-top:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+  /* --- RESPONSIVIDADE (MOBILE) --- */
+  @media (max-width: 600px) {
+      .screen-widget { padding: 15px; }
+      .tools-row { gap: 10px; }
+      .print-btn-text { display: none; }
+      .print-btn-top { padding: 0 12px; }
+      
+      .month-title { font-size: 1rem; }
+      .hero-names { font-size: 1.1rem; }
+      .hero-msg { font-size: 0.8rem; }
+  }
+
+  /* Hero Section */
+  .hero-box {
+      background: linear-gradient(135deg, #27ae60, #1e8449);
+      color: white;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 15px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+      min-height: 130px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .hero-icon { font-size: 2.2rem; display: block; margin-bottom: 2px; cursor: pointer; transition: transform 0.2s; position: relative; z-index: 2; font-family: var(--emoji-font); }
+  .hero-names { font-size: 1.3rem; font-weight: 700; margin: 2px 0; line-height: 1.2; position: relative; z-index: 2; }
+  .hero-msg { font-size: 0.9rem; font-style: italic; opacity: 0.9; margin-top: 5px; white-space: pre-line; position: relative; z-index: 2; }
+  
+  #particle-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+  .particle { position: absolute; bottom: -20px; animation: riseUp 2s linear forwards; }
+  @keyframes riseUp { to { transform: translateY(-150px) rotate(360deg); opacity: 0; } }
+
+  /* Lista Tela */
+  .scroll-list { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
+  .scroll-list::-webkit-scrollbar { width: 8px; }
+  .scroll-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+  .list-item { display: flex; align-items: center; padding: 10px 5px; border-bottom: 1px solid #f0f0f0; transition: 0.2s; }
+  .list-item:hover { background: #fdfdfd; }
+  .list-item.today { background: #eafff2; border-left: 4px solid var(--primary); border-radius: 4px; }
+  
+  .date-badge { 
+      background: #f4f4f4; color: #555; 
+      width: 50px; height: 50px; 
+      border-radius: 10px; 
+      display: flex; flex-direction: column; 
+      align-items: center; justify-content: center; 
+      margin-right: 15px; flex-shrink: 0; 
+      line-height: 1;
+  }
+  .today .date-badge { background: var(--primary); color: white; }
+  
+  .db-day { font-size: 1.1rem; font-weight: 700; }
+  .db-week { font-size: 0.55rem; text-transform: uppercase; margin-top: 2px; }
+  .db-month { font-size: 0.55rem; text-transform: uppercase; font-weight: 700; margin-top: 1px; color: var(--primary-dark); }
+  .today .db-month { color: #eafff2; }
+
+  .name-text { font-weight: 600; font-size: 1rem; color: var(--text-color); flex-grow: 1; }
+  .wa-btn { background: #25D366; color: white; border: none; border-radius: 20px; padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; text-decoration: none; }
+
+  /* ========================================= */
+  /* ESTILOS DE IMPRESSÃO (A4 LIMPO)          */
+  /* ========================================= */
+  
+  #print-container { display: none; }
 
   @media print {
-      body { background: white; padding: 0; font-size: 12pt; }
-      .widget-container { box-shadow: none; border: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; display: block; }
-      .header, .nav-btn, .reset-btn, .footer-actions, #hero-section, .status-msg, .search-container, .whatsapp-btn { display: none !important; }
-      .print-header { display: block !important; }
-      .birthday-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; max-height: none; overflow: visible; width: 100%; }
-      .birthday-item { border: none; border-bottom: 1px solid #ddd; padding: 8px 0; break-inside: avoid; }
-      .date-box { background-color: transparent !important; color: #000 !important; width: auto; height: auto; border-radius: 0; margin-right: 15px; text-align: left; flex-direction: row; align-items: baseline; gap: 5px; }
-      .date-day { font-size: 14pt; color: #000; } .date-week { font-size: 10pt; color: #333; } .date-month { font-size: 10pt; color: #333; margin-left: 5px; display: inline-block !important; }
-      .person-name { font-size: 12pt; color: #000; font-weight: 500; }
-      .is-today-item { background-color: #f5f5f5 !important; border: 1px solid #ccc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { size: A4; margin: 0; }
+      body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; height: auto; }
+      .screen-widget { display: none !important; }
+      #print-container { display: block !important; }
+
+      .a4-sheet {
+          width: 210mm; height: 297mm; position: relative; margin: 0 auto; background: white; overflow: hidden; 
+          padding: 20mm 20mm 20mm 20mm; display: flex; flex-direction: column;
+      }
+
+      .print-border { display: none; }
+
+      .print-content-wrapper {
+          position: absolute; top: 35mm; left: 22mm; right: 22mm; bottom: 20mm; 
+          display: flex; flex-direction: column; z-index: 1;
+      }
+
+      .p-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 12px; flex-shrink: 0; }
+      .p-emojis { font-family: var(--emoji-font); font-size: 1.3rem; letter-spacing: 12px; margin-bottom: 2px; }
+      .p-title { font-size: 1.6rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin: 0; line-height: 1.2; }
+
+      .p-list-grid {
+          flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 25px; align-content: start; row-gap: 10px; overflow: hidden; 
+      }
+
+      .p-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 4px 0; break-inside: avoid; min-height: 40px; }
+
+      .p-date-box {
+          width: 40px; height: 40px; background-color: #f3f4f6 !important; border: 1px solid #ccc; border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 10px; color: #333 !important; flex-shrink: 0; line-height: 1;
+      }
+      .pd-day { font-size: 1rem; font-weight: bold; }
+      .pd-week { font-size: 0.5rem; text-transform: uppercase; margin-top: 1px; }
+      .pd-month { font-size: 0.5rem; text-transform: uppercase; font-weight: 700; margin-top: 0px; }
+
+      .p-name { font-size: 1rem; color: #2c3e50; font-weight: 600; line-height: 1.1; white-space: normal; word-wrap: break-word; }
+
+      .p-footer { text-align: center; border-top: 1px solid var(--primary); padding-top: 8px; margin-top: 10px; flex-shrink: 0; color: var(--primary); font-weight: 600; font-size: 0.85rem; }
+      .p-footer-emoji { font-family: var(--emoji-font); font-size: 1rem; margin-top: 2px; letter-spacing: 5px; }
   }
 </style>
 </head>
 <body>
 
-<div class="widget-container">
-  
-  <div class="header">
-    <button class="nav-btn no-print" onclick="changeMonth(-1)">&#10094;</button>
-    <div class="header-content">
-      <h2 id="month-display" class="date-display">Carregando...</h2>
-      <div class="subtitle">Secretaria Municipal da Educação de Orindiúva</div>
-      <button id="btn-today" class="reset-btn no-print" style="display:none;" onclick="resetToToday()">Voltar para Hoje</button>
+<div class="screen-widget">
+    <div class="nav-header">
+        <button class="nav-btn" onclick="changeMonth(-1)">&#10094;</button>
+        <h2 id="screen-month-title" class="month-title">Mês Atual</h2>
+        <button class="nav-btn" onclick="changeMonth(1)">&#10095;</button>
+        <button id="btn-reset" class="nav-btn" style="display:none; margin-left:10px; width:auto; padding:0 10px; font-size:0.8rem;" onclick="resetSearch()">✖</button>
     </div>
-    <button class="nav-btn no-print" onclick="changeMonth(1)">&#10095;</button>
-  </div>
 
-  <div class="search-container">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" class="search-input" placeholder="" onkeyup="handleSearch()">
-  </div>
+    <div class="tools-row">
+        <div class="search-container" id="search-container" onclick="openSearchMobile(event)">
+            <button class="search-icon-btn">🔍</button>
+            <input type="text" id="search-input" class="search-input" placeholder="Pesquisar..." onkeyup="handleSearch()">
+            <button class="search-close-btn" onclick="closeSearchMobile(event)">✕</button>
+        </div>
 
-  <div class="print-header">
-      <h1 id="print-title" class="print-title">ANIVERSARIANTES</h1>
-      <h2 class="print-subtitle">Secretaria Municipal da Educação de Orindiúva</h2>
-  </div>
+        <button class="notify-btn" id="btn-notification" onclick="requestNotificationPermission()" title="Ativar Notificações">
+            🔔
+        </button>
 
-  <div id="hero-section">
-    <div id="emoji-background" class="effects-container">
-        <div class="confetti-pool">
-            <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
-            <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
-            <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
-            <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+        <button class="print-btn-top" onclick="prepareAndPrint()" title="Imprimir">
+            🖨️ <span class="print-btn-text">Imprimir</span>
+        </button>
+    </div>
+
+    <div class="hero-box" id="hero-box">
+        <div id="particle-layer"></div>
+        <span id="hero-emoji" class="hero-icon">🎂</span>
+        <div id="hero-names" class="hero-names">Aniversariantes</div>
+        <div id="hero-msg" class="hero-msg"></div>
+    </div>
+
+    <div class="scroll-list" id="screen-list"></div>
+</div>
+
+<div id="print-container">
+    <div class="a4-sheet">
+        <div class="print-border"></div> 
+        <div class="print-content-wrapper">
+            
+            <div class="p-header">
+                <div class="p-emojis">🎁🎉🎂🥳🎈</div>
+                <h1 id="print-title" class="p-title">ANIVERSARIANTES</h1>
+            </div>
+
+            <div id="print-list-grid" class="p-list-grid"></div>
+
+            <div class="p-footer">
+                <div>Com carinho,</div>
+                <div>Secretaria Municipal de Educação de Orindiúva 💚</div>
+                <div class="p-footer-emoji">🎈🎁🎂✨</div>
+            </div>
+
         </div>
     </div>
-    <div class="hero-content-wrapper">
-        <span class="hero-icon">🎂</span>
-        <div id="hero-title" class="hero-title">Aniversariante do Dia!</div>
-        <div id="hero-names" class="hero-names-container"></div>
-        
-        <div class="hero-message-box">
-            <div id="hero-message-text" class="hero-message-text"></div>
-            <div class="hero-signature">Com carinho,<br>Secretaria Municipal de Educação de Orindiúva</div>
-        </div>
-    </div>
-  </div>
-  
-  <div id="list-container">
-    <div class="status-msg">Procurando festas...</div>
-  </div>
-
-  <div class="footer-actions">
-      <button class="print-btn" onclick="window.print()">🖨️ Imprimir</button>
-  </div>
-
 </div>
 
 <script>
   // --- CONFIGURAÇÕES ---
   const CALENDAR_ID = 'c_aac01d0cbc7c5ed5147d0b02239e95cc283095daff716e32cb79d53bd184370b@group.calendar.google.com'; 
   const API_KEY = 'AIzaSyDuCPt6S-mF33IGaMnYtiYLJlDjaXJG4wA'; 
-  // --------------------
-
-  const messagesSingular = [
-      "Feliz Aniversário! 🎉 Desejamos a você um dia cheio de alegria e realizações. Sua dedicação à educação é admirável e inspiradora. Que este novo ano de vida lhe traga muito sucesso, alegrias e paz. ✨",
-      "Hoje é dia de celebrar a vida de quem dedica a sua ao ensino. Parabéns! 🥳 Que seu caminho continue sendo iluminado e cheio de conquistas. 🌟",
-      "Parabéns! 🎂 Que a felicidade seja sua companheira diária e que seu trabalho continue inspirando todos ao seu redor. Felicidades! 👏",
-      "Desejamos um aniversário repleto de sorrisos e um novo ciclo de vida cheio de prosperidade. Obrigado por fazer parte da nossa equipe! 💚",
-      "Feliz vida! 🎈 Que você tenha um ano incrível, com saúde, paz e muitas realizações pessoais e profissionais. 🙌",
-      "Hoje celebramos você! 🎁 Que seu aniversário seja tão especial quanto a sua dedicação em fazer a diferença na educação do nosso município. 🥰",
-      "Parabéns pelo seu dia! 🎉 Que a alegria de hoje se estenda por todo o seu novo ano. Muita saúde e sucesso! 🍾",
-      "Feliz Aniversário! 🍰 Que a vida continue lhe presenteando com bons momentos e que sua jornada na educação continue gerando belos frutos. 🌳",
-      "Um feliz aniversário cheio de luz! ✨ Agradecemos por todo empenho e carinho dedicados ao nosso trabalho. Tudo de bom! ❤️",
-      "Viva! 🥳 Hoje o dia é todo seu. Desejamos que você realize todos os seus sonhos e continue sendo essa pessoa especial para nossa equipe. 🎈"
-  ];
-
-  const messagesPlural = [
-      "Feliz Aniversário! 🎉 Desejamos a vocês um dia cheio de alegria e realizações. A dedicação de vocês à educação é admirável e inspiradora. Que este novo ano de vida lhes traga muito sucesso, alegrias e paz. ✨",
-      "Hoje é dia de celebrar a vida de quem dedica a sua ao ensino. Parabéns! 🥳 Que o caminho de vocês continue sendo iluminado e cheio de conquistas. 🌟",
-      "Parabéns! 🎂 Que a felicidade seja a companheira diária de vocês e que o trabalho de cada um continue inspirando todos ao redor. Felicidades! 👏",
-      "Desejamos um aniversário repleto de sorrisos e um novo ciclo de vida cheio de prosperidade. Obrigado por fazerem parte da nossa equipe! 💚",
-      "Feliz vida! 🎈 Que vocês tenham um ano incrível, com saúde, paz e muitas realizações pessoais e profissionais. 🙌",
-      "Hoje celebramos vocês! 🎁 Que o aniversário seja tão especial quanto a dedicação de vocês em fazer a diferença na educação do nosso município. 🥰",
-      "Parabéns pelo dia de vocês! 🎉 Que a alegria de hoje se estenda por todo o novo ano. Muita saúde e sucesso! 🍾",
-      "Feliz Aniversário! 🍰 Que a vida continue presenteando vocês com bons momentos e que a jornada na educação continue gerando belos frutos. 🌳",
-      "Um feliz aniversário cheio de luz! ✨ Agradecemos por todo empenho e carinho dedicados ao nosso trabalho. Tudo de bom para vocês! ❤️",
-      "Viva! 🥳 Hoje o dia é todo de vocês. Desejamos que realizem todos os seus sonhos e continuem sendo essas pessoas especiais para nossa equipe. 🎈"
+  const ASSINATURA = "\n\nCom carinho,\nSecretaria Municipal de Educação de Orindiúva.";
+  
+  // --- 30 FRASES ---
+  const frases = [
+    "Feliz Aniversário! Desejamos a você um dia cheio de alegria e realizações. Sua dedicação à educação é admirável e inspiradora. Que este novo ano de vida lhe traga muito sucesso, alegrias e paz. 🎂🎉🥳🎈💚",
+    "Parabéns! Que seu dia seja iluminado e repleto de sorrisos. Agradecemos profundamente pelo seu compromisso com o futuro das nossas crianças. Felicidades mil! ✨📚🎁",
+    "Hoje é dia de celebrar você! Que a vida continue te presenteando com sabedoria, saúde e muito amor. Obrigado por fazer a diferença na nossa educação. Viva! 👏🎂🎈",
+    "Feliz vida! Que este novo ciclo venha carregado de boas energias e momentos inesquecíveis. Sua presença em nossa equipe é um presente para todos nós. 🌟💐🎉",
+    "Parabéns pelo seu dia! Que a felicidade seja constante em sua vida e que você continue trilhando este lindo caminho na educação com tanto carinho. 🥳🍰🎁",
+    "Um feliz aniversário cheio de luz! Desejamos que você realize todos os seus sonhos e continue inspirando alunos e colegas com seu exemplo. Gratidão! ✨🙏🎈",
+    "Viva! Hoje o dia é todo seu. Que a alegria transborde e que o ano novo que se inicia traga muitas conquistas pessoais e profissionais. Parabéns! 🎂🥂💚",
+    "Feliz Aniversário! Que a paz e o amor estejam sempre presentes na sua caminhada. Você é parte fundamental da nossa história na educação. Sucesso! 📚🎉👏",
+    "Parabéns! Desejamos muita saúde para continuar essa jornada linda de ensinar e aprender. Que seu dia seja doce e especial como você merece. 🍭🍰🎁",
+    "Hoje celebramos sua vida! Que o brilho nos seus olhos nunca se apague. Agradecemos por toda a dedicação e carinho que você coloca em tudo que faz. ✨🎈🥳",
+    "Felicidades! Que este aniversário marque o início de um ano incrível, repleto de vitórias e aprendizados. Você é essencial para nós! 🌟💚🎂",
+    "Parabéns pelo seu dia! Que você colha em dobro todo o bem e conhecimento que planta diariamente. Tenha um dia maravilhoso! 🌺📚🎉",
+    "Feliz Aniversário! Que a vida lhe sorria sempre, trazendo saúde, prosperidade e muitas bênçãos. Obrigado por ser quem você é. 🙌🎁🎈",
+    "Dia de festa! Comemore muito, pois você merece toda a felicidade do mundo. Sua paixão pela educação nos motiva. Parabéns! 🥳🎂🥂",
+    "Feliz novo ciclo! Que a sabedoria e a paciência continuem sendo suas virtudes. Desejamos um caminho florido e cheio de luz. 🌸✨💚",
+    "Parabéns! Que a alegria de hoje se estenda por todos os dias do ano. Sua contribuição para a educação de Orindiúva é inestimável. 📚👏🎉",
+    "Feliz Aniversário! Que você continue sendo essa luz que guia e acolhe. Muita paz, saúde e amor no seu coração. 💖🍰🎈",
+    "Celebre a vida! Que seus passos sejam sempre firmes e seus sonhos alcançados. Gratidão por compartilhar seu talento conosco. Parabéns! 🌟🎁🥳",
+    "Parabéns! Desejamos um dia repleto de abraços sinceros e carinho. Que sua jornada na educação continue sendo brilhante. ✨📚🎂",
+    "Feliz dia! Que a harmonia e o sucesso façam morada em sua vida. Agradecemos por sua entrega e profissionalismo diários. 🥂💚🎈",
+    "Viva você! Que a vida lhe reserve as melhores surpresas. Obrigado por construir o conhecimento com tanto amor. Felicidades! 🧱❤️🎉",
+    "Parabéns! Que a saúde nunca falte e que a alegria seja sua rotina. Você faz a diferença na vida de muitos. Aproveite seu dia! 👏🍰🎁",
+    "Feliz Aniversário! Que este novo ano seja um capítulo lindo na sua história, cheio de conquistas e sorrisos. Estamos felizes em ter você aqui. 📖✨🥳",
+    "Parabéns! Que a esperança e a fé renovem suas energias. Sua dedicação é a semente de um futuro melhor. Tudo de bom! 🌱💚🎂",
+    "Hoje é dia de gratidão pela sua vida! Que você receba em dobro todo o carinho que doa. Tenha um aniversário espetacular! 🎉🎈🎁",
+    "Felicidades! Que sua estrela continue brilhando forte. A educação se fortalece com pessoas como você. Parabéns! ⭐📚🥂",
+    "Feliz Aniversário! Que o amor e a paz envolvam seu coração hoje e sempre. Obrigado por sua parceria e empenho constantes. 🤝💖🍰",
+    "Parabéns! Que você tenha um ano de muitas realizações e crescimento. Sua trajetória nos orgulha muito. Viva! 🏆🌟🥳",
+    "Feliz vida! Que a simplicidade e a alegria dos pequenos momentos tornem seu dia grandioso. Parabéns por mais um ano! 🎈🌿🎂",
+    "Parabéns! Desejamos que seu caminho seja sempre iluminado e que você continue transformando vidas através da educação. Felicidades! 💡📚💚"
   ];
 
   let currentDate = new Date();
-  let searchTimer = null;
+  let eventsCache = []; 
   let isSearchMode = false;
-  let animationTimeout = null; 
+  let particleInterval = null;
 
-  const listContainer = document.getElementById('list-container');
-  const heroSection = document.getElementById('hero-section');
-  const heroNames = document.getElementById('hero-names');
-  const heroMessageText = document.getElementById('hero-message-text');
-  const heroTitle = document.getElementById('hero-title');
-  const btnToday = document.getElementById('btn-today');
-  const printTitle = document.getElementById('print-title');
-
-  function init() {
-    renderHeader();
-    fetchEvents();
-    prepareEmojis(); 
-    setupInteraction(); 
-  }
-
-  function getRandomMessage(isPlural = false) {
-      const sourceArray = isPlural ? messagesPlural : messagesSingular;
-      const randomIndex = Math.floor(Math.random() * sourceArray.length);
-      return sourceArray[randomIndex];
-  }
-
-  // --- FUNÇÃO DE COMPARTILHAMENTO (API WHATSAPP) ---
-  function shareWhatsapp(fullName) {
-      const firstName = fullName.split(' ')[0]; 
-      const phrase = getRandomMessage(false);
-      const signature = "Com carinho,\nSecretaria Municipal de Educação de Orindiúva";
+  function init() { 
+      updateScreenHeader(); 
+      fetchEvents(); 
+      setupParticles(); 
+      registerServiceWorker(); // Ativa PWA
       
-      const text = "🎉 Parabéns " + firstName + "! 🎂\n\n" + phrase + "\n\n" + signature + " 🎈🎁";
-      
-      const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
-      window.open(url, '_blank');
-  }
-
-  function prepareEmojis() {
-      const container = document.getElementById('emoji-background');
-      const emojis = ['🎉', '🎁', '🎂', '🥳', '🍾', '✨', '🎈', '👏', '🍰', '❤️'];
-      const numEmojis = 30;
-
-      for (let i = 0; i < numEmojis; i++) {
-          const el = document.createElement('span');
-          el.classList.add('floating-emoji');
-          el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-          const left = Math.random() * 100;
-          const size = (Math.random() * 1.5) + 1.2;
-          const delay = Math.random() * 0.5; 
-          const drift = (Math.random() * 200 - 100) + 'px';
-          const rotEnd = (Math.random() * 720 - 360) + 'deg';
-
-          el.style.left = `${left}%`;
-          el.style.fontSize = `${size}rem`;
-          el.style.animationDelay = `${delay}s`;
-          el.style.setProperty('--drift', drift);
-          el.style.setProperty('--rot-end', rotEnd);
-          container.appendChild(el);
-      }
-  }
-
-  function setupInteraction() {
-      const confettiElements = document.querySelectorAll('.confetti');
-      const colors = ['#e74c3c', '#f1c40f', '#3498db', '#9b59b6', '#2ecc71', '#e67e22', '#ffffff'];
-      const heroArea = document.getElementById('hero-section');
-
-      heroArea.addEventListener('mouseenter', () => {
-          heroArea.classList.add('active-party');
-          confettiElements.forEach(el => {
-              const randX = Math.floor(Math.random() * 400) - 200; 
-              const randY = Math.floor(Math.random() * 200) - 300;
-              const randRot = Math.floor(Math.random() * 360);
-              const randomColor = colors[Math.floor(Math.random() * colors.length)];
-              el.style.setProperty('--rand-x', randX + 'px');
-              el.style.setProperty('--rand-y', randY + 'px');
-              el.style.setProperty('--rand-rot', randRot + 'deg');
-              el.style.backgroundColor = randomColor;
-          });
-          if (animationTimeout) clearTimeout(animationTimeout);
-          animationTimeout = setTimeout(() => {
-              heroArea.classList.remove('active-party');
-          }, 3000);
+      // CONFIGURAÇÃO DO FECHAMENTO AUTOMÁTICO DA BUSCA
+      document.addEventListener('click', function(event) {
+          const searchContainer = document.getElementById('search-container');
+          const isClickInside = searchContainer.contains(event.target);
+          if (!isClickInside && searchContainer.classList.contains('active')) {
+              closeSearchMobile(null); 
+          }
       });
   }
 
-  function renderHeader() {
-    if (isSearchMode) {
-        document.getElementById('month-display').innerText = "Resultados da Busca";
-        printTitle.innerText = "RESULTADOS DA BUSCA";
-        btnToday.style.display = 'block';
-        return;
-    }
-    const optionsScreen = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    let fullDate = currentDate.toLocaleDateString('pt-BR', optionsScreen);
-    fullDate = fullDate.charAt(0).toUpperCase() + fullDate.slice(1);
-    document.getElementById('month-display').innerText = fullDate;
-
-    const optionsPrint = { month: 'long', year: 'numeric' };
-    let printDate = currentDate.toLocaleDateString('pt-BR', optionsPrint);
-    printTitle.innerText = "ANIVERSARIANTES DE " + printDate.toUpperCase();
-
-    const now = new Date();
-    if (currentDate.getMonth() !== now.getMonth() || currentDate.getFullYear() !== now.getFullYear()) {
-      btnToday.style.display = 'block';
-    } else {
-      btnToday.style.display = 'none';
-    }
-  }
-
-  function changeMonth(step) {
-    if (isSearchMode) {
-        document.getElementById('search-input').value = '';
-        isSearchMode = false;
-        currentDate = new Date();
-    }
-    currentDate.setDate(1); 
-    currentDate.setMonth(currentDate.getMonth() + step);
-    renderHeader();
-    fetchEvents();
-  }
-
-  function resetToToday() {
-    document.getElementById('search-input').value = '';
-    isSearchMode = false;
-    currentDate = new Date();
-    renderHeader();
-    fetchEvents();
-  }
-
-  function handleSearch() {
-      clearTimeout(searchTimer);
-      const query = document.getElementById('search-input').value.trim();
-      searchTimer = setTimeout(() => {
-          if (query.length > 0) {
-              isSearchMode = true;
-              fetchAnnualEvents(query);
-          } else {
-              isSearchMode = false;
-              resetToToday();
-          }
-      }, 500);
-  }
-
-  async function fetchAnnualEvents(query) {
-      listContainer.innerHTML = '<div class="status-msg">Buscando em todo o ano...</div>';
-      heroSection.style.display = 'none';
-      renderHeader();
-      const year = currentDate.getFullYear();
-      const timeMin = new Date(year, 0, 1).toISOString();
-      const timeMax = new Date(year, 11, 31, 23, 59, 59).toISOString();
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime&maxResults=2500`;
-
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const filteredEvents = data.items.filter(event => 
-            event.summary && event.summary.toLowerCase().includes(query.toLowerCase())
-        );
-        renderList(filteredEvents, true);
-      } catch (error) {
-        listContainer.innerHTML = `<div class="status-msg">Erro na busca.</div>`;
+  // --- SERVICE WORKER & NOTIFICAÇÕES ---
+  function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registrado', reg))
+          .catch(err => console.log('SW falhou', err));
+      }
+      
+      // Verifica permissão atual e ajusta ícone do sino
+      if (Notification.permission === 'granted') {
+          document.getElementById('btn-notification').classList.add('active');
       }
   }
 
-  async function fetchEvents() {
-    listContainer.innerHTML = '<div class="status-msg">Carregando lista...</div>';
-    heroSection.style.display = 'none';
+  function requestNotificationPermission() {
+      Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+              document.getElementById('btn-notification').classList.add('active');
+              new Notification("Notificações Ativadas!", {
+                  body: "Você será avisado quando houver aniversariantes.",
+                  icon: "https://cdn-icons-png.flaticon.com/512/2488/2488980.png"
+              });
+              checkBirthdaysAndNotify(eventsCache); // Checa imediatamente
+          }
+      });
+  }
+
+  function checkBirthdaysAndNotify(items) {
+      if (Notification.permission !== 'granted') return;
+      
+      // Filtra aniversariantes de hoje
+      const todays = items.filter(i => i.isToday);
+      
+      // Evita spam: salva no localStorage que já notificou hoje
+      const todayKey = 'notified_' + new Date().toDateString();
+      if (localStorage.getItem(todayKey)) return;
+
+      if (todays.length > 0) {
+          const names = todays.map(i => i.name).join(', ');
+          new Notification("🎉 Tem bolo hoje!", {
+              body: `Hoje é aniversário de: ${names}. Clique para parabenizar!`,
+              icon: "https://cdn-icons-png.flaticon.com/512/2488/2488980.png"
+          });
+          localStorage.setItem(todayKey, 'true');
+      }
+  }
+
+  // --- CONTROLES DE BUSCA MOBILE ---
+  function openSearchMobile(event) {
+      if (window.innerWidth <= 600) {
+          if (event && (event.target.classList.contains('search-close-btn') || event.target.tagName === 'INPUT')) {
+              return;
+          }
+          const container = document.getElementById('search-container');
+          container.classList.add('active');
+          document.getElementById('search-input').focus();
+          if(event) event.stopPropagation(); 
+      }
+  }
+
+  function closeSearchMobile(e) {
+      if(e) e.stopPropagation();
+      const container = document.getElementById('search-container');
+      container.classList.remove('active');
+      document.getElementById('search-input').value = '';
+      if(isSearchMode) resetSearch();
+  }
+
+  // --- DADOS ---
+  async function fetchEvents(query = "") {
+    const listDiv = document.getElementById('screen-list');
+    listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Carregando...</div>';
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const timeMin = new Date(year, month, 1).toISOString();
-    const timeMax = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
+    let timeMin, timeMax;
+
+    if (query) {
+        timeMin = new Date(year, 0, 1).toISOString();
+        timeMax = new Date(year, 11, 31).toISOString();
+        document.getElementById('screen-month-title').innerText = "Busca";
+        document.getElementById('btn-reset').style.display = 'flex';
+    } else {
+        const month = currentDate.getMonth();
+        timeMin = new Date(year, month, 1).toISOString();
+        timeMax = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+        updateScreenHeader();
+        document.getElementById('btn-reset').style.display = 'none';
+    }
+
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime&maxResults=2500`;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-      renderList(data.items, false);
-    } catch (error) {
-      console.error(error);
-      listContainer.innerHTML = `<div class="status-msg" style="color:#e74c3c">Erro na conexão.</div>`;
-    }
+        const resp = await fetch(url);
+        const data = await resp.json();
+        let items = data.items || [];
+        if (query) items = items.filter(e => e.summary && e.summary.toLowerCase().includes(query.toLowerCase()));
+
+        const processed = items.map(evt => {
+            let date = new Date(evt.start.date || evt.start.dateTime);
+            if(evt.start.date) date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+            return { name: evt.summary, date: date, day: date.getDate(), month: date.getMonth(), isToday: isToday(date) };
+        });
+
+        processed.sort((a,b) => {
+            if (!query && (a.isToday && !b.isToday)) return -1;
+            if (!query && (!a.isToday && b.isToday)) return 1;
+            if (a.month !== b.month) return a.month - b.month;
+            return a.day - b.day;
+        });
+
+        eventsCache = processed;
+        renderScreenList(processed);
+        updateHero(processed, query);
+        
+        // Verifica notificação após carregar dados
+        if(!query) checkBirthdaysAndNotify(processed);
+
+    } catch (err) { listDiv.innerHTML = '<div style="text-align:center; color:red;">Erro ao carregar.</div>'; }
   }
 
-  function renderList(events, showMonthName) {
-    events.sort((a, b) => {
-        const dateAStr = a.start.date || a.start.dateTime;
-        const dateBStr = b.start.date || b.start.dateTime;
-        return dateAStr.localeCompare(dateBStr);
-    });
+  function isToday(date) { const now = new Date(); return date.getDate() === now.getDate() && date.getMonth() === now.getMonth(); }
 
-    listContainer.innerHTML = '';
-    let birthdaysToday = [];
-    let listItems = [];
-    const today = new Date();
-    const isCurrentMonthView = !isSearchMode && (today.getMonth() === currentDate.getMonth() && today.getFullYear() === currentDate.getFullYear());
+  // --- TELA ---
+  function renderScreenList(items) {
+      const container = document.getElementById('screen-list');
+      container.innerHTML = '';
+      if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum aniversariante.</div>'; return; }
 
-    if (!events || events.length === 0) {
-      listContainer.innerHTML = '<div class="status-msg">Nenhum resultado encontrado.</div>';
-      return;
-    }
+      items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = `list-item ${item.isToday ? 'today' : ''}`;
+          const week = item.date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','');
+          const monthShort = item.date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','');
+          const day = item.day < 10 ? '0'+item.day : item.day;
+          
+          let btn = '';
+          if (item.isToday) {
+              const safeName = item.name.replace(/'/g, "\\'");
+              btn = `<button class="wa-btn" onclick="shareWa('${safeName}')">💬 Parabéns</button>`;
+          }
 
-    events.forEach(event => {
-      let eventDateStr = event.start.date || event.start.dateTime;
-      if (!eventDateStr) return;
-      let eventDate = new Date(eventDateStr);
-      if(event.start.date) { eventDate = new Date(eventDate.getUTCFullYear(), eventDate.getUTCMonth(), eventDate.getUTCDate()); }
-
-      const day = eventDate.getDate();
-      const monthShort = eventDate.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
-      const weekDay = eventDate.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
-      const isActuallyToday = day === today.getDate() && eventDate.getMonth() === today.getMonth();
-      const isTodayHighlight = isActuallyToday;
-
-      if (isActuallyToday && !isSearchMode) { birthdaysToday.push(event.summary); }
-      
-      listItems.push({
-        name: event.summary, day: day < 10 ? '0' + day : day, week: weekDay, month: monthShort, isToday: isTodayHighlight
-      });
-    });
-
-    if (birthdaysToday.length > 0 && !isSearchMode) {
-      heroNames.innerHTML = birthdaysToday.map(name => `<div class="hero-name-item">${name}</div>`).join('');
-      const isPlural = birthdaysToday.length > 1;
-      heroMessageText.innerText = getRandomMessage(isPlural);
-      heroTitle.innerText = isPlural ? "Aniversariantes do Dia!" : "Aniversariante do Dia!";
-      heroSection.style.display = 'block';
-    } else {
-      heroSection.style.display = 'none';
-    }
-
-    const ul = document.createElement('ul');
-    ul.className = 'birthday-list';
-    listItems.forEach(person => {
-      const li = document.createElement('li');
-      li.className = `birthday-item ${person.isToday ? 'is-today-item' : ''}`;
-      
-      let dateContent = `<span class="date-day">${person.day}</span><span class="date-week">${person.week}</span>`;
-      if (showMonthName) { dateContent += `<span class="date-month">${person.month}</span>`; }
-
-      let whatsappButtonHTML = '';
-      if (person.isToday) {
-          const safeName = person.name.replace(/'/g, "\\'");
-          whatsappButtonHTML = `
-            <button class="whatsapp-btn" onclick="shareWhatsapp('${safeName}')" title="Enviar Cartão">
-                <span class="wa-icon">💬</span> Enviar Parabéns
-            </button>
+          div.innerHTML = `
+            <div class="date-badge">
+                <span class="db-day">${day}</span>
+                <span class="db-week">${week}</span>
+                <span class="db-month">${monthShort}</span>
+            </div>
+            <span class="name-text">${item.name}</span>
+            ${btn}
           `;
+          container.appendChild(div);
+      });
+  }
+
+  function updateHero(items, isSearch) {
+      const hn = document.getElementById('hero-names'), hm = document.getElementById('hero-msg'), he = document.getElementById('hero-emoji');
+      if (isSearch) { he.innerText = "🔍"; hn.innerText = `${items.length} Encontrados`; hm.innerText = "Resultado da pesquisa"; return; }
+      
+      const todays = items.filter(i => i.isToday);
+      if (todays.length > 0) { 
+          he.innerText = "🎂"; 
+          hn.innerHTML = todays.map(i => i.name).join('<br>'); 
+          const randomPhrase = frases[Math.floor(Math.random() * frases.length)];
+          hm.innerText = randomPhrase + ASSINATURA; 
+      }
+      else { 
+          he.innerText = "📅"; 
+          hn.innerText = "Agenda do Mês"; 
+          hm.innerText = "Confira a lista completa abaixo.";
+      }
+  }
+
+  // --- IMPRESSÃO ---
+  function prepareAndPrint() {
+      const mesStr = currentDate.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
+      const anoStr = currentDate.getFullYear();
+      document.getElementById('print-title').innerText = isSearchMode ? "RESULTADO DA BUSCA" : `ANIVERSARIANTES DE ${mesStr} / ${anoStr}`;
+
+      const printData = [...eventsCache].sort((a,b) => {
+          if (a.month !== b.month) return a.month - b.month;
+          return a.day - b.day;
+      });
+
+      const grid = document.getElementById('print-list-grid');
+      grid.innerHTML = ''; 
+
+      if(printData.length === 0) {
+          grid.innerHTML = '<div style="grid-column: span 2; text-align:center;">Nenhum aniversariante encontrado.</div>';
+      } else {
+          printData.forEach(item => {
+              const week = item.date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','');
+              const monthShort = item.date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','');
+              const d = item.day < 10 ? '0'+item.day : item.day;
+              
+              const el = document.createElement('div');
+              el.className = 'p-item';
+              el.innerHTML = `
+                  <div class="p-date-box">
+                      <span class="pd-day">${d}</span>
+                      <span class="pd-week">${week}</span>
+                      <span class="pd-month">${monthShort}</span>
+                  </div>
+                  <span class="p-name">${item.name}</span>
+              `;
+              grid.appendChild(el);
+          });
       }
 
-      li.innerHTML = `
-        <div class="date-box">${dateContent}</div>
-        <div class="person-info">
-            <span class="person-name">${person.name}</span>
-            ${whatsappButtonHTML}
-        </div>
-      `;
-      ul.appendChild(li);
-    });
-    listContainer.appendChild(ul);
+      window.print();
+  }
+
+  // --- UTIL ---
+  function changeMonth(s) { if(isSearchMode) resetSearch(); currentDate.setMonth(currentDate.getMonth() + s); currentDate.setDate(1); init(); }
+  function updateScreenHeader() { const s = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }); document.getElementById('screen-month-title').innerText = s.charAt(0).toUpperCase() + s.slice(1); }
+  let st; function handleSearch() { clearTimeout(st); const v = document.getElementById('search-input').value.trim(); st = setTimeout(() => { if (v) { isSearchMode = true; fetchEvents(v); } else { resetSearch(); } }, 600); }
+  function resetSearch() { document.getElementById('search-input').value = ''; isSearchMode = false; currentDate = new Date(); init(); }
+  
+  function shareWa(fullName) { 
+      const firstName = fullName.split(' ')[0]; 
+      const randomPhrase = frases[Math.floor(Math.random() * frases.length)];
+      const txt = `🎉 *Parabéns ${firstName}!* 🎂\n\n${randomPhrase}\n\nCom carinho,\nSecretaria Municipal de Educação de Orindiúva`;
+      window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txt)); 
+  }
+
+  function setupParticles() {
+      const l = document.getElementById('particle-layer');
+      const c = () => { const p = document.createElement('span'); p.className = 'particle'; p.innerText = ['🎈','✨','🎉'][Math.floor(Math.random()*3)]; p.style.left = Math.random()*100+'%'; p.style.fontSize = (Math.random()+1)+'rem'; l.appendChild(p); setTimeout(()=>p.remove(),2000); };
+      document.getElementById('hero-box').addEventListener('mouseenter', ()=>{ if(!particleInterval) particleInterval = setInterval(c, 150); });
+      document.getElementById('hero-box').addEventListener('mouseleave', ()=>{ clearInterval(particleInterval); particleInterval = null; });
   }
 
   init();
