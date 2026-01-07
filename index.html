@@ -51,60 +51,115 @@
   }
 
   /* Cabeçalho */
-  .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+  .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
   .month-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); text-transform: capitalize; margin: 0; text-align: center; }
   .nav-btn { background: #eafff2; color: var(--primary); border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
   .nav-btn:hover { background: var(--primary); color: #fff; }
 
-  /* Ferramentas */
-  .tools-row { display: flex; gap: 15px; margin-bottom: 15px; flex-shrink: 0; height: 45px; align-items: center; }
-  
-  .search-bar { 
-      flex-grow: 1; 
-      display: flex; align-items: center; 
-      background: #f9f9f9; 
-      padding: 0 15px; 
-      border-radius: 8px; 
-      border: 1px solid #eee; 
-      transition: 0.3s; 
+  /* FERRAMENTAS (CONTAINER) */
+  .tools-row { 
+      display: flex; 
+      gap: 10px; /* Espaço entre os botões */
+      margin-bottom: 15px; 
+      flex-shrink: 0; 
+      height: 45px; 
+      position: relative; 
+      align-items: center;
+      justify-content: flex-end; /* Alinha à direita se sobrar espaço */
   }
-  .search-bar:focus-within { border-color: var(--primary); background: #fff; }
-  .search-input { 
-      border: none; background: transparent; 
-      flex-grow: 1; outline: none; margin-left: 10px; 
-      font-family: inherit; color: var(--text-color); font-size: 1rem; 
-      font-size: 16px; 
+  
+  /* 1. BARRA DE BUSCA (DESKTOP PADRÃO) */
+  .search-container {
+      flex-grow: 1; /* Ocupa o espaço que sobra */
+      display: flex;
+      align-items: center;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      transition: all 0.3s ease;
+      height: 100%;
+      padding: 0 10px;
+      position: relative;
+  }
+  
+  .search-icon-btn {
+      background: transparent; border: none;
+      font-size: 1.2rem; color: #666;
+      cursor: pointer; display: flex; align-items: center;
+      padding: 0;
   }
 
-  /* BOTÃO NOTIFICAÇÃO (SININHO) */
+  .search-input { 
+      border: none; background: transparent; 
+      flex-grow: 1; outline: none; margin-left: 8px; 
+      font-family: inherit; color: var(--text-color); font-size: 1rem; 
+      font-size: 16px; width: 100%;
+  }
+
+  .search-close-btn {
+      display: none; /* Escondido no Desktop */
+      background: none; border: none;
+      font-size: 1.2rem; color: #999;
+      cursor: pointer; padding: 0 5px;
+  }
+
+  /* 2. BOTÃO NOTIFICAÇÃO */
   .notify-btn {
       background: #fff; border: 1px solid #eee; color: #f39c12;
       border-radius: 8px; width: 45px; height: 100%;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; transition: 0.2s;
+      font-size: 1.2rem; transition: 0.2s; flex-shrink: 0;
   }
   .notify-btn.active { background: #fff8e1; border-color: #f39c12; }
 
+  /* 3. BOTÃO IMPRIMIR */
   .print-btn-top { 
       background: var(--primary); 
       color: white; border: none; 
       border-radius: 8px; 
+      height: 100%;
       padding: 0 20px; 
       cursor: pointer; 
       font-weight: 600; 
       font-size: 0.95rem; 
       display: flex; align-items: center; gap: 8px; 
-      transition: 0.2s; white-space: nowrap; 
-      height: 100%;
+      transition: 0.2s; white-space: nowrap; flex-shrink: 0;
   }
   .print-btn-top:hover { background: var(--primary-dark); transform: translateY(-1px); }
 
   /* --- RESPONSIVIDADE (MOBILE) --- */
   @media (max-width: 600px) {
       .screen-widget { padding: 15px; }
-      .tools-row { gap: 10px; }
+      
+      /* Botão Imprimir vira ícone quadrado */
       .print-btn-text { display: none; }
-      .print-btn-top { padding: 0 12px; }
+      .print-btn-top { padding: 0; width: 45px; justify-content: center; }
+      
+      /* Barra de Busca vira ícone quadrado (fechada) */
+      .search-container {
+          flex-grow: 0; /* Não cresce */
+          width: 45px;  /* Tamanho fixo */
+          padding: 0;
+          justify-content: center;
+          cursor: pointer;
+      }
+      .search-input { display: none; } /* Esconde input */
+      .search-icon-btn { pointer-events: none; } /* Clique vai no container */
+
+      /* Barra de Busca (ABERTA) */
+      .search-container.active {
+          position: absolute; /* Flutua sobre os outros */
+          top: 0; left: 0; right: 0;
+          width: 100%; /* Ocupa tudo */
+          z-index: 50; /* Fica por cima */
+          background: #fff;
+          border-color: var(--primary);
+          padding: 0 10px;
+          justify-content: flex-start;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      .search-container.active .search-input { display: block; }
+      .search-container.active .search-close-btn { display: block; }
       
       .month-title { font-size: 1rem; }
       .hero-names { font-size: 1.1rem; }
@@ -317,7 +372,7 @@
       updateScreenHeader(); 
       fetchEvents(); 
       setupParticles(); 
-      registerServiceWorker(); // Ativa PWA
+      registerServiceWorker();
       
       // CONFIGURAÇÃO DO FECHAMENTO AUTOMÁTICO DA BUSCA
       document.addEventListener('click', function(event) {
@@ -336,8 +391,6 @@
           .then(reg => console.log('SW registrado', reg))
           .catch(err => console.log('SW falhou', err));
       }
-      
-      // Verifica permissão atual e ajusta ícone do sino
       if (Notification.permission === 'granted') {
           document.getElementById('btn-notification').classList.add('active');
       }
@@ -349,9 +402,9 @@
               document.getElementById('btn-notification').classList.add('active');
               new Notification("Notificações Ativadas!", {
                   body: "Você será avisado quando houver aniversariantes.",
-                  icon: "https://cdn-icons-png.flaticon.com/512/2488/2488980.png"
+                  icon: "https://img.icons8.com/fluency/512/birthday-cake.png"
               });
-              checkBirthdaysAndNotify(eventsCache); // Checa imediatamente
+              checkBirthdaysAndNotify(eventsCache);
           }
       });
   }
@@ -359,10 +412,7 @@
   function checkBirthdaysAndNotify(items) {
       if (Notification.permission !== 'granted') return;
       
-      // Filtra aniversariantes de hoje
       const todays = items.filter(i => i.isToday);
-      
-      // Evita spam: salva no localStorage que já notificou hoje
       const todayKey = 'notified_' + new Date().toDateString();
       if (localStorage.getItem(todayKey)) return;
 
@@ -370,7 +420,7 @@
           const names = todays.map(i => i.name).join(', ');
           new Notification("🎉 Tem bolo hoje!", {
               body: `Hoje é aniversário de: ${names}. Clique para parabenizar!`,
-              icon: "https://cdn-icons-png.flaticon.com/512/2488/2488980.png"
+              icon: "https://img.icons8.com/fluency/512/birthday-cake.png"
           });
           localStorage.setItem(todayKey, 'true');
       }
@@ -441,8 +491,6 @@
         eventsCache = processed;
         renderScreenList(processed);
         updateHero(processed, query);
-        
-        // Verifica notificação após carregar dados
         if(!query) checkBirthdaysAndNotify(processed);
 
     } catch (err) { listDiv.innerHTML = '<div style="text-align:center; color:red;">Erro ao carregar.</div>'; }
